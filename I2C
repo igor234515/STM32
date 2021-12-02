@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "math.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,6 +61,7 @@ static void MX_I2C1_Init(void);
 uint8_t regData[6];
 uint8_t regAddress[10];
 uint16_t DataX, DataY, DataZ;
+double DataXf, DataYf, DataZf, Axy, Axz, Ayz;
 /* USER CODE END 0 */
 
 /**
@@ -105,16 +106,21 @@ int main(void)
 	regAddress[3] = 0;
 	HAL_I2C_Master_Transmit(&hi2c1, I2C_ADDRESS, regAddress, 4, I2C_TIMEOUT);
 	HAL_I2C_Master_Transmit(&hi2c1, I2C_ADDRESS, regAddress, 1, I2C_TIMEOUT);
-	HAL_I2C_Master_Receive(&hi2c1, I2C_ADDRESS, regData, 9, I2C_TIMEOUT);
-  while (1)
+	  while (1)
   {
 		regAddress[0] = 3;
 		HAL_I2C_Master_Transmit(&hi2c1, I2C_ADDRESS, regAddress, 1, I2C_TIMEOUT);
 		HAL_I2C_Master_Receive(&hi2c1, I2C_ADDRESS, regData, 6, I2C_TIMEOUT);
-		HAL_Delay(1000);
+		HAL_Delay(10);
 		DataX = (((uint16_t)regData[0])<<8) | ((uint16_t)regData[1]);
 		DataY = (((uint16_t)regData[2])<<8) | ((uint16_t)regData[3]);
-		DataZ = (((uint16_t)regData[4])<<8) | ((uint16_t)regData[5]);		
+		DataZ = (((uint16_t)regData[4])<<8) | ((uint16_t)regData[5]);
+		DataXf = (double)DataX;
+		DataYf = (double)DataY;
+		DataZf = (double)DataZ;
+		Axy = atan2(DataYf, DataXf)*57;
+		Axz = atan2(DataZf, DataXf)*57;
+		Ayz = atan2(DataZf, DataYf)*57;
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
